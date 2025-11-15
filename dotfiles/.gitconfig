@@ -1,0 +1,177 @@
+[user]
+    # IMPORTANT: Update these with your information
+    name = Your Name
+    email = your.email@example.com
+
+[core]
+    editor = vim
+    autocrlf = input
+    whitespace = trailing-space,space-before-tab
+    pager = less -FRX
+
+[init]
+    defaultBranch = main
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[alias]
+    # Status
+    s = status --short --branch
+    st = status
+
+    # Logging
+    l = log --oneline --graph --decorate
+    ll = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lol = log --graph --decorate --pretty=oneline --abbrev-commit
+    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+    log-pretty = log --pretty=format:'%C(yellow)%h%Creset %C(cyan)%ad%Creset | %s %C(green)%d%Creset %C(bold blue)[%an]%Creset' --date=short
+    changelog = log --pretty=format:'- %s (%h)' --no-merges
+
+    # Diff
+    d = diff
+    dc = diff --cached
+    ds = diff --staged
+    dw = diff --word-diff
+
+    # Add
+    a = add
+    aa = add --all
+    ap = add --patch
+    au = add --update
+
+    # Commit
+    c = commit
+    cm = commit -m
+    ca = commit --amend
+    cane = commit --amend --no-edit
+
+    # Checkout
+    co = checkout
+    cob = checkout -b
+    com = checkout main
+    cod = checkout develop
+
+    # Branch
+    b = branch
+    ba = branch --all
+    bd = branch --delete
+    bD = branch -D
+    bm = branch --merged
+    bnm = branch --no-merged
+
+    # Remote
+    r = remote
+    rv = remote -v
+    ra = remote add
+    rr = remote remove
+    ru = remote update
+
+    # Fetch
+    f = fetch
+    fa = fetch --all
+    fp = fetch --prune
+
+    # Pull
+    pl = pull
+    plr = pull --rebase
+
+    # Push
+    p = push
+    pf = push --force-with-lease
+    pu = push -u origin HEAD
+
+    # Rebase
+    rb = rebase
+    rbi = rebase -i
+    rbc = rebase --continue
+    rba = rebase --abort
+
+    # Reset
+    unstage = reset HEAD --
+    undo = reset --soft HEAD~1
+    uncommit = reset --soft HEAD~1
+
+    # Stash
+    sl = stash list
+    ss = stash save
+    sp = stash pop
+    sa = stash apply
+    sd = stash drop
+    sc = stash clear
+
+    # Show
+    show-files = show --pretty="" --name-only
+
+    # Clean
+    cleanup = clean -fd
+    cleanup-all = clean -fdx
+
+    # Other
+    aliases = config --get-regexp alias
+    amend = commit --amend --no-edit
+    contributors = shortlog --summary --numbered
+    ignore = update-index --assume-unchanged
+    unignore = update-index --no-assume-unchanged
+    ignored = !git ls-files -v | grep "^[[:lower:]]"
+    ours = checkout --ours
+    theirs = checkout --theirs
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    visual = !gitk
+
+[push]
+    default = simple
+    followTags = true
+    autoSetupRemote = true
+
+[pull]
+    rebase = false
+
+[fetch]
+    prune = true
+    pruneTags = true
+
+[diff]
+    tool = vimdiff
+    colorMoved = zebra
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+
+[status]
+    showUntrackedFiles = all
+
+[branch]
+    autoSetupRebase = always
+
+[help]
+    autocorrect = 1
+
+[credential]
+    helper = cache --timeout=3600
+
+# Include local gitconfig if it exists (for machine-specific settings)
+[include]
+    path = ~/.gitconfig.local

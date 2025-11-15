@@ -1,0 +1,100 @@
+# Example server inventory
+# Copy this file to servers.yaml and customize for your infrastructure
+
+servers:
+  # Home servers / bare metal
+  home:
+    - name: homelab-01
+      ip: 192.168.1.100
+      ssh_user: admin
+      type: bare-metal
+      os: ubuntu-22.04
+      role: docker-host
+      tags:
+        - production
+        - docker
+
+    - name: homelab-02
+      ip: 192.168.1.101
+      ssh_user: admin
+      type: bare-metal
+      os: debian-11
+      role: nas
+      tags:
+        - storage
+        - backup
+
+  # VPS / Cloud servers
+  vps:
+    - name: prod-web-01
+      ip: 1.2.3.4
+      ssh_user: deploy
+      ssh_port: 22
+      type: vps
+      provider: digitalocean
+      os: ubuntu-22.04
+      role: web-server
+      tags:
+        - production
+        - web
+        - public
+
+    - name: staging-web-01
+      ip: 5.6.7.8
+      ssh_user: deploy
+      type: vps
+      provider: linode
+      os: ubuntu-22.04
+      role: web-server
+      tags:
+        - staging
+        - web
+
+  # Development servers
+  dev:
+    - name: dev-01
+      ip: 192.168.1.150
+      ssh_user: developer
+      type: vm
+      os: ubuntu-22.04
+      role: development
+      tags:
+        - development
+        - testing
+
+# Server groups for batch operations
+groups:
+  production:
+    - homelab-01
+    - prod-web-01
+
+  staging:
+    - staging-web-01
+
+  all-web:
+    - prod-web-01
+    - staging-web-01
+
+  docker-hosts:
+    - homelab-01
+    - prod-web-01
+
+# Default SSH configuration
+ssh_defaults:
+  port: 22
+  key_file: ~/.ssh/id_rsa
+  timeout: 10
+
+# Backup configuration
+backup:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention:
+    daily: 7
+    weekly: 4
+    monthly: 12
+  destinations:
+    - type: local
+      path: /backup
+    - type: s3
+      bucket: my-backups
+      region: us-east-1
