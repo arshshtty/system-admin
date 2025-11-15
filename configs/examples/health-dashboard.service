@@ -1,0 +1,14 @@
+[Unit]
+Description=Server Health Dashboard Web UI
+After=network.target health-monitor.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/system-admin
+ExecStart=/usr/bin/python3 /opt/system-admin/scripts/monitoring/web-dashboard.py --data-dir /var/www/health-monitor --port 8080
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

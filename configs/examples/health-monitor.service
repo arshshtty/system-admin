@@ -1,0 +1,14 @@
+[Unit]
+Description=Server Health Monitoring Service
+After=network.target
+
+[Service]
+Type=simple
+User=monitoring
+WorkingDirectory=/opt/system-admin
+ExecStart=/usr/bin/python3 /opt/system-admin/scripts/monitoring/health-check.py --config /opt/system-admin/inventory/servers.yaml --output /var/www/health-monitor
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

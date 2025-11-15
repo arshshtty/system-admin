@@ -1,0 +1,10 @@
+# Python requirements for system-admin toolkit
+
+# Health monitoring
+Flask==3.0.0
+PyYAML==6.0.1
+
+# Optional: For advanced features
+# boto3==1.34.0        # AWS S3 integration for backups
+# requests==2.31.0     # HTTP notifications
+# paramiko==3.4.0      # Alternative SSH library
