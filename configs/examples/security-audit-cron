@@ -1,0 +1,12 @@
+# Example cron job for automated security audits
+# Add to crontab with: sudo crontab -e
+
+# Run security audit weekly on Sundays at 2 AM
+# Save report to /var/log/security-audits/
+0 2 * * 0 /path/to/system-admin/scripts/security/security-audit.sh --output /var/log/security-audits/audit-$(date +\%Y\%m\%d).txt
+
+# Run security audit daily and send critical alerts via email
+0 3 * * * /path/to/system-admin/scripts/security/security-audit.sh --json --output /tmp/security-audit.json && /path/to/send-alerts.sh
+
+# Check SSL certificate expiry daily
+0 4 * * * /path/to/system-admin/scripts/security/ssl-manager.sh check --all --days 30 || echo "SSL certificates expiring soon!" | mail -s "SSL Alert" admin@example.com

@@ -1,0 +1,20 @@
+# Example systemd service for continuous network monitoring
+# Install: sudo cp network-monitoring.service /etc/systemd/system/
+# Enable: sudo systemctl enable --now network-monitoring
+
+[Unit]
+Description=Network Health Monitoring
+After=network.target
+
+[Service]
+Type=simple
+User=monitor
+WorkingDirectory=/home/monitor
+ExecStart=/home/monitor/system-admin/scripts/network/network-diagnostics.sh check
+Restart=always
+RestartSec=300
+StandardOutput=append:/var/log/network-monitor.log
+StandardError=append:/var/log/network-monitor-error.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,69 @@
+---
+# Example Ansible Inventory
+# Copy this file to hosts.yml and customize for your infrastructure
+
+all:
+  vars:
+    ansible_user: admin
+    ansible_python_interpreter: /usr/bin/python3
+
+  children:
+    # Web Servers
+    webservers:
+      hosts:
+        web01:
+          ansible_host: 192.168.1.10
+        web02:
+          ansible_host: 192.168.1.11
+      vars:
+        server_role: web
+
+    # Database Servers
+    databases:
+      hosts:
+        db01:
+          ansible_host: 192.168.1.20
+          ansible_user: dbadmin
+      vars:
+        server_role: database
+
+    # Application Servers
+    appservers:
+      hosts:
+        app01:
+          ansible_host: 192.168.1.30
+      vars:
+        server_role: application
+
+    # Monitoring Servers
+    monitoring:
+      hosts:
+        monitor01:
+          ansible_host: 192.168.1.40
+      vars:
+        server_role: monitoring
+
+    # Development Servers
+    development:
+      hosts:
+        dev01:
+          ansible_host: 192.168.1.50
+      vars:
+        server_role: development
+
+    # Production Group
+    production:
+      children:
+        webservers:
+        databases:
+        appservers:
+      vars:
+        environment: production
+
+    # Staging Group
+    staging:
+      hosts:
+        staging01:
+          ansible_host: 192.168.1.60
+      vars:
+        environment: staging
