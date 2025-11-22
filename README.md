@@ -7,10 +7,13 @@ A comprehensive collection of scripts, configurations, and tools for managing ho
 This repository provides ready-to-use automation scripts for:
 - **Server bootstrapping** - Get new servers production-ready in minutes with essential tools
 - **Development environment setup** - Docker, Zsh, modern CLI tools, Node.js, Python, and more
-- **Health monitoring** - Real-time multi-server monitoring with beautiful web dashboard
+- **Health monitoring** - Real-time multi-server monitoring with Prometheus + Grafana
+- **Log aggregation** - Centralized logging with Loki or ELK stack
+- **Security tools** - Baseline audits, SSL management, automated updates
+- **Network diagnostics** - Comprehensive network testing and troubleshooting
 - **Backup automation** - Files, databases, Docker volumes with retention policies
-- **Docker management** - Intelligent cleanup with dry-run mode and scheduling
-- **Multi-server management** - YAML-based inventory and batch operations
+- **Docker management** - Intelligent cleanup, Swarm orchestration helpers
+- **Multi-server management** - Ansible playbooks and YAML-based inventory
 - **Infrastructure as Code** - Version-controlled configurations and dotfiles
 
 ## Quick Start
@@ -65,11 +68,29 @@ system-admin/
 ├── scripts/
 │   ├── bootstrap/          # Initial server setup scripts
 │   │   └── install-essentials.sh
-│   ├── monitoring/         # Health checks and monitoring
+│   ├── monitoring/         # Health checks and monitoring stacks
+│   │   ├── health-check.py
+│   │   ├── web-dashboard.py
+│   │   └── setup-prometheus-grafana.sh
 │   ├── backup/            # Backup and recovery scripts
-│   ├── security/          # Security hardening tools
+│   │   └── backup-manager.sh
+│   ├── security/          # Security tools and hardening
+│   │   ├── security-audit.sh
+│   │   ├── ssl-manager.sh
+│   │   └── auto-updates.sh
 │   ├── docker/            # Docker management scripts
+│   │   └── docker-cleanup.sh
+│   ├── network/           # Network diagnostics tools
+│   │   └── network-diagnostics.sh
+│   ├── logging/           # Log aggregation setup
+│   │   └── setup-log-aggregation.sh
+│   ├── orchestration/     # Container orchestration helpers
+│   │   └── docker-swarm-helper.sh
 │   └── utils/             # Utility scripts
+├── ansible/               # Ansible automation
+│   ├── playbooks/         # Ready-to-use playbooks
+│   ├── roles/             # Custom roles
+│   └── inventories/       # Inventory files
 ├── configs/
 │   ├── templates/         # Configuration templates
 │   └── examples/          # Example configurations
@@ -78,10 +99,7 @@ system-admin/
 │   ├── .vimrc
 │   ├── .gitconfig
 │   └── .tmux.conf
-├── ansible/               # Ansible playbooks (future)
-├── terraform/             # Infrastructure as Code (future)
-├── runbooks/              # Operational runbooks
-├── inventory/             # Server inventory files
+├── inventory/             # Server inventory files (YAML)
 └── docs/                  # Documentation
 ```
 
@@ -412,6 +430,300 @@ sudo systemctl status health-dashboard
 - Memory > 85% = Warning
 - Disk > 85% = Warning, > 95% = Critical
 
+### 4. Security Tools
+
+#### Security Baseline Audit (`scripts/security/security-audit.sh`)
+
+Comprehensive security auditing for Linux servers.
+
+**Features:**
+- SSH configuration analysis
+- Firewall status checks
+- User account auditing
+- Open ports scanning
+- Failed login attempts monitoring
+- Security updates checking
+- File permissions validation
+- Kernel security parameters review
+
+**Quick Start:**
+```bash
+# Run security audit
+sudo ./scripts/security/security-audit.sh
+
+# Save report to file
+sudo ./scripts/security/security-audit.sh --output security-report.txt
+
+# JSON output
+sudo ./scripts/security/security-audit.sh --json --output report.json
+
+# Verbose mode
+sudo ./scripts/security/security-audit.sh --verbose
+```
+
+#### SSL Certificate Management (`scripts/security/ssl-manager.sh`)
+
+Manage SSL/TLS certificates with ease.
+
+**Features:**
+- Let's Encrypt certificate issuance
+- Self-signed certificate generation
+- Certificate renewal automation
+- Expiry monitoring
+- Multi-domain support
+
+**Quick Start:**
+```bash
+# Issue Let's Encrypt certificate
+sudo ./scripts/security/ssl-manager.sh issue --domain example.com --email admin@example.com --webroot /var/www/html
+
+# Issue self-signed certificate
+sudo ./scripts/security/ssl-manager.sh issue --domain localhost --self-signed
+
+# Check certificate expiry
+./scripts/security/ssl-manager.sh check --domain example.com
+
+# Renew all certificates
+sudo ./scripts/security/ssl-manager.sh renew --all
+
+# List all certificates
+./scripts/security/ssl-manager.sh list
+
+# Setup automatic renewal
+sudo ./scripts/security/ssl-manager.sh auto-renew
+```
+
+#### Automated Security Updates (`scripts/security/auto-updates.sh`)
+
+Configure automatic security updates for Ubuntu/Debian.
+
+**Features:**
+- Automatic security patch installation
+- Optional auto-reboot after updates
+- Email notifications
+- Interactive configuration wizard
+
+**Quick Start:**
+```bash
+# Enable automatic updates
+sudo ./scripts/security/auto-updates.sh enable
+
+# Enable with auto-reboot at 3 AM
+sudo ./scripts/security/auto-updates.sh enable --auto-reboot --reboot-time 03:00
+
+# Enable with email notifications
+sudo ./scripts/security/auto-updates.sh enable --email admin@example.com
+
+# Check status
+sudo ./scripts/security/auto-updates.sh status
+
+# Interactive configuration
+sudo ./scripts/security/auto-updates.sh configure
+
+# Run updates now
+sudo ./scripts/security/auto-updates.sh update-now
+```
+
+### 5. Network Diagnostics (`scripts/network/network-diagnostics.sh`)
+
+Comprehensive network troubleshooting and testing toolkit.
+
+**Features:**
+- Quick health checks
+- Latency and packet loss testing
+- DNS diagnostics
+- Port connectivity testing
+- Traceroute analysis
+- Interface information
+- Speed testing
+
+**Quick Start:**
+```bash
+# Quick network check
+./scripts/network/network-diagnostics.sh check
+
+# Test connectivity to host
+./scripts/network/network-diagnostics.sh connectivity --host google.com
+
+# DNS diagnostics
+./scripts/network/network-diagnostics.sh dns --host example.com
+
+# Check if port is open
+./scripts/network/network-diagnostics.sh ports --host example.com --port 443
+
+# Scan common ports
+./scripts/network/network-diagnostics.sh ports --host example.com
+
+# Test latency
+./scripts/network/network-diagnostics.sh latency --host 8.8.8.8 --count 20
+
+# Traceroute
+./scripts/network/network-diagnostics.sh traceroute --host google.com
+
+# Show interfaces
+./scripts/network/network-diagnostics.sh interfaces
+
+# Full diagnostic report
+./scripts/network/network-diagnostics.sh report --output network-report.txt
+```
+
+### 6. Monitoring Stack Setup
+
+#### Prometheus + Grafana (`scripts/monitoring/setup-prometheus-grafana.sh`)
+
+Deploy a complete monitoring stack with Prometheus, Grafana, Node Exporter, and cAdvisor.
+
+**Features:**
+- One-command deployment
+- Pre-configured dashboards
+- Alert rules included
+- Docker-based (easy to manage)
+- Auto-configured data sources
+
+**Quick Start:**
+```bash
+# Install monitoring stack
+./scripts/monitoring/setup-prometheus-grafana.sh install
+
+# Custom installation directory and ports
+./scripts/monitoring/setup-prometheus-grafana.sh --install-dir /opt/monitoring --grafana-port 8080 install
+
+# Start services
+./scripts/monitoring/setup-prometheus-grafana.sh start
+
+# Check status
+./scripts/monitoring/setup-prometheus-grafana.sh status
+
+# View logs
+./scripts/monitoring/setup-prometheus-grafana.sh logs
+
+# Stop services
+./scripts/monitoring/setup-prometheus-grafana.sh stop
+
+# Uninstall
+./scripts/monitoring/setup-prometheus-grafana.sh uninstall
+```
+
+**Access Points:**
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin/admin123)
+- Node Exporter: http://localhost:9100
+- cAdvisor: http://localhost:8081
+
+### 7. Log Aggregation (`scripts/logging/setup-log-aggregation.sh`)
+
+Deploy centralized logging with Loki/Promtail/Grafana or ELK stack.
+
+**Features:**
+- Choice of Loki (lightweight) or ELK (full-featured)
+- Automatic log collection from system and Docker
+- Web-based log viewing and searching
+- Configurable retention policies
+
+**Quick Start:**
+```bash
+# Install Loki stack (recommended)
+./scripts/logging/setup-log-aggregation.sh install
+
+# Install ELK stack
+./scripts/logging/setup-log-aggregation.sh --stack elk install
+
+# Start services
+./scripts/logging/setup-log-aggregation.sh start
+
+# Check status
+./scripts/logging/setup-log-aggregation.sh status
+
+# View logs
+./scripts/logging/setup-log-aggregation.sh logs
+
+# Stop services
+./scripts/logging/setup-log-aggregation.sh stop
+```
+
+**Access Points:**
+- Loki Stack:
+  - Grafana: http://localhost:3001 (admin/admin123)
+  - Loki API: http://localhost:3100
+- ELK Stack:
+  - Kibana: http://localhost:5601
+  - Elasticsearch: http://localhost:9200
+
+### 8. Container Orchestration
+
+#### Docker Swarm Helper (`scripts/orchestration/docker-swarm-helper.sh`)
+
+Simplify Docker Swarm cluster management.
+
+**Features:**
+- Easy cluster initialization
+- Stack deployment helpers
+- Service scaling
+- Backup and restore
+- Status monitoring
+
+**Quick Start:**
+```bash
+# Initialize swarm
+./scripts/orchestration/docker-swarm-helper.sh init --advertise-addr 192.168.1.100
+
+# Show cluster status
+./scripts/orchestration/docker-swarm-helper.sh status
+
+# Deploy a stack
+./scripts/orchestration/docker-swarm-helper.sh deploy --file docker-compose.yml --name myapp
+
+# Scale a service
+./scripts/orchestration/docker-swarm-helper.sh scale --service myapp_web --replicas 5
+
+# Update service
+./scripts/orchestration/docker-swarm-helper.sh update --service myapp_web --image nginx:latest
+
+# Rollback service
+./scripts/orchestration/docker-swarm-helper.sh rollback --service myapp_web
+
+# Backup swarm configuration
+./scripts/orchestration/docker-swarm-helper.sh backup
+
+# Remove a stack
+./scripts/orchestration/docker-swarm-helper.sh remove --name myapp
+```
+
+### 9. Ansible Automation (`ansible/`)
+
+Pre-built Ansible playbooks for common server management tasks.
+
+**Available Playbooks:**
+- `server-setup.yml` - Initial server configuration
+- `security-hardening.yml` - Apply security best practices
+- `install-docker.yml` - Install Docker on target servers
+- `update-servers.yml` - Update all packages
+
+**Quick Start:**
+```bash
+# Install Ansible
+sudo apt install ansible
+
+# Create inventory
+cp ansible/inventories/hosts.example.yml ansible/inventories/hosts.yml
+# Edit hosts.yml with your servers
+
+# Test connectivity
+ansible all -i ansible/inventories/hosts.yml -m ping
+
+# Run server setup
+ansible-playbook -i ansible/inventories/hosts.yml ansible/playbooks/server-setup.yml
+
+# Apply security hardening
+ansible-playbook -i ansible/inventories/hosts.yml ansible/playbooks/security-hardening.yml
+
+# Install Docker on all servers
+ansible-playbook -i ansible/inventories/hosts.yml ansible/playbooks/install-docker.yml
+
+# Update all servers
+ansible-playbook -i ansible/inventories/hosts.yml ansible/playbooks/update-servers.yml
+```
+
 ## Platform Support
 
 Currently supports:
@@ -435,16 +747,14 @@ Completed:
 - [x] Backup automation scripts
 - [x] Docker cleanup automation
 - [x] Database backup helpers (MySQL, PostgreSQL)
-
-Future additions planned:
-- [ ] Security baseline audit script
-- [ ] SSL certificate management
-- [ ] Monitoring stack setup (Prometheus + Grafana)
-- [ ] Ansible playbooks for common tasks
-- [ ] Network diagnostics and testing tools
-- [ ] Log aggregation setup
-- [ ] Automated security updates management
-- [ ] Container orchestration helpers (Docker Swarm, K8s)
+- [x] Security baseline audit script
+- [x] SSL certificate management
+- [x] Monitoring stack setup (Prometheus + Grafana)
+- [x] Ansible playbooks for common tasks
+- [x] Network diagnostics and testing tools
+- [x] Log aggregation setup
+- [x] Automated security updates management
+- [x] Container orchestration helpers (Docker Swarm)
 
 ## Contributing
 

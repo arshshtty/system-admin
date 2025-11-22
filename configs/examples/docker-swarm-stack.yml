@@ -1,0 +1,75 @@
+# Example Docker Swarm Stack Configuration
+# Deploy with: docker stack deploy -c docker-swarm-stack.yml myapp
+
+version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - webnet
+    volumes:
+      - web-data:/usr/share/nginx/html
+
+  app:
+    image: your-app:latest
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    environment:
+      - DATABASE_URL=postgresql://db:5432/myapp
+    networks:
+      - webnet
+      - backend
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_USER=myapp
+      - POSTGRES_DB=myapp
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - backend
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    secrets:
+      - db_password
+
+networks:
+  webnet:
+    driver: overlay
+  backend:
+    driver: overlay
+
+volumes:
+  web-data:
+  db-data:
+
+secrets:
+  db_password:
+    external: true

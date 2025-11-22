@@ -1,0 +1,46 @@
+---
+- name: Update All Servers
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Check for available updates
+      command: apt list --upgradable
+      register: available_updates
+      changed_when: false
+      when: ansible_os_family == "Debian"
+
+    - name: Display available updates
+      debug:
+        msg: "{{ available_updates.stdout_lines }}"
+      when: ansible_os_family == "Debian" and available_updates.stdout_lines | length > 1
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+        autoremove: yes
+        autoclean: yes
+      when: ansible_os_family == "Debian"
+      register: upgrade_result
+
+    - name: Check if reboot is required
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Notify if reboot is required
+      debug:
+        msg: "REBOOT REQUIRED on {{ inventory_hostname }}"
+      when: reboot_required.stat.exists
+
+    - name: Send summary
+      debug:
+        msg: |
+          Update Summary for {{ inventory_hostname }}:
+          - Updates installed: {{ upgrade_result.changed }}
+          - Reboot required: {{ reboot_required.stat.exists }}

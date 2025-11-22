@@ -1,0 +1,90 @@
+---
+- name: Server Setup - Essential Packages and Configuration
+  hosts: all
+  become: yes
+
+  vars:
+    timezone: "UTC"
+    packages:
+      - curl
+      - wget
+      - git
+      - vim
+      - htop
+      - tmux
+      - ncdu
+      - jq
+      - unzip
+      - build-essential
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+    - name: Install essential packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Set timezone
+      timezone:
+        name: "{{ timezone }}"
+
+    - name: Ensure NTP is installed and running
+      apt:
+        name: chrony
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Start and enable chrony
+      service:
+        name: chrony
+        state: started
+        enabled: yes
+
+    - name: Set hostname
+      hostname:
+        name: "{{ inventory_hostname }}"
+      when: inventory_hostname is defined
+
+    - name: Create admin user if not exists
+      user:
+        name: admin
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        create_home: yes
+      when: ansible_user != "admin"
+
+    - name: Disable root SSH login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+      notify: restart sshd
+
+    - name: Configure automatic security updates
+      apt:
+        name: unattended-upgrades
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Enable automatic security updates
+      copy:
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+          APT::Periodic::Download-Upgradeable-Packages "1";
+          APT::Periodic::AutocleanInterval "7";
+
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
