@@ -61,6 +61,29 @@ Options:
   --help          Show help message
 ```
 
+## 🎨 Interactive TUI (NEW!)
+
+**Prefer a visual interface?** We now have a friendly Terminal User Interface!
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Launch the TUI
+./admin.py
+```
+
+The TUI provides:
+- **Guided workflows** for common tasks (Docker cleanup, backups, monitoring, bootstrapping)
+- **Command preview** - See the exact CLI command before execution
+- **Educational design** - Learn the CLI as you use the interface
+- **Safe by default** - Dry-run mode enabled for destructive operations
+- **All the scripts** in one easy-to-navigate menu
+
+Perfect for newcomers and occasional users! Power users can still use the scripts directly.
+
+📖 **[Read the TUI Guide](TUI_GUIDE.md)** for detailed usage instructions.
+
 ## Repository Structure
 
 ```
