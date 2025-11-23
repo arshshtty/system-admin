@@ -110,6 +110,12 @@ system-admin/
 │   ├── orchestration/     # Container orchestration helpers
 │   │   └── docker-swarm-helper.sh
 │   └── utils/             # Utility scripts
+│       ├── inventory-discovery.sh
+│       ├── one-liner-install.sh
+│       ├── sync-dotfiles.sh
+│       ├── quick-troubleshoot.sh
+│       ├── safe-restart.sh
+│       └── set-timezone.sh
 ├── ansible/               # Ansible automation
 │   ├── playbooks/         # Ready-to-use playbooks
 │   ├── roles/             # Custom roles
@@ -747,6 +753,204 @@ ansible-playbook -i ansible/inventories/hosts.yml ansible/playbooks/install-dock
 ansible-playbook -i ansible/inventories/hosts.yml ansible/playbooks/update-servers.yml
 ```
 
+## 10. Utility Scripts (`scripts/utils/`)
+
+Essential utilities for common server management tasks.
+
+### Server Inventory Auto-Discovery (`scripts/utils/inventory-discovery.sh`)
+
+Automatically scan your network and build a server inventory.
+
+**Features:**
+- Network scanning with nmap
+- Port detection
+- SSH accessibility testing
+- Hostname and OS detection
+- YAML inventory generation
+- Integration with monitoring scripts
+
+**Quick Start:**
+```bash
+# Scan local network
+sudo ./scripts/utils/inventory-discovery.sh --subnet 192.168.1.0/24
+
+# Custom output file
+sudo ./scripts/utils/inventory-discovery.sh --subnet 10.0.0.0/24 --output my-servers.yaml
+
+# Verbose mode
+sudo ./scripts/utils/inventory-discovery.sh --subnet 192.168.1.0/24 --verbose
+
+# Dry run
+sudo ./scripts/utils/inventory-discovery.sh --subnet 192.168.1.0/24 --dry-run
+```
+
+**Requirements:** nmap (`sudo apt install nmap`)
+
+### One-Liner Installers (`scripts/utils/one-liner-install.sh`)
+
+Generate easy-to-share curl|bash installation commands.
+
+**Features:**
+- Quick installation commands for all scripts
+- Self-hosted wrapper scripts
+- Bootstrap, Docker, monitoring, security installers
+- Safe distribution of common setups
+
+**Quick Start:**
+```bash
+# Show all available one-liners
+./scripts/utils/one-liner-install.sh all
+
+# Show specific installer
+./scripts/utils/one-liner-install.sh bootstrap
+./scripts/utils/one-liner-install.sh docker
+./scripts/utils/one-liner-install.sh monitoring
+
+# Generate wrapper scripts for self-hosting
+./scripts/utils/one-liner-install.sh generate
+```
+
+**Example one-liner:**
+```bash
+# Bootstrap a new server remotely
+curl -fsSL https://raw.githubusercontent.com/arshshtty/system-admin/main/scripts/bootstrap/install-essentials.sh | bash
+```
+
+### Dotfiles Synchronizer (`scripts/utils/sync-dotfiles.sh`)
+
+Keep dotfiles synchronized across multiple servers.
+
+**Features:**
+- Push dotfiles to servers or pull from servers
+- Automatic backup before sync
+- Support for multiple servers
+- Inventory file integration
+- Dry-run mode
+
+**Quick Start:**
+```bash
+# Push dotfiles to servers
+./scripts/utils/sync-dotfiles.sh --servers admin@server1,admin@server2 --direction push
+
+# Pull dotfiles from a server
+./scripts/utils/sync-dotfiles.sh --servers admin@server1 --direction pull
+
+# Use inventory file
+./scripts/utils/sync-dotfiles.sh --inventory inventory/servers.yaml --direction push
+
+# Sync specific files only
+./scripts/utils/sync-dotfiles.sh --servers admin@server1 --files .vimrc,.tmux.conf
+
+# Dry run
+./scripts/utils/sync-dotfiles.sh --servers admin@server1 --dry-run
+```
+
+### Quick Troubleshoot (`scripts/utils/quick-troubleshoot.sh`)
+
+Single command to gather comprehensive diagnostic information.
+
+**Features:**
+- System information and uptime
+- Resource usage (CPU, memory, disk)
+- Network configuration and connectivity
+- Running processes and services
+- Docker container status
+- Security checks
+- Health assessment
+- Optional system logs
+
+**Quick Start:**
+```bash
+# Run quick diagnostic
+./scripts/utils/quick-troubleshoot.sh
+
+# Save report to file
+./scripts/utils/quick-troubleshoot.sh --output troubleshoot-report.txt
+
+# Include system logs
+./scripts/utils/quick-troubleshoot.sh --include-logs --output full-report.txt
+
+# Verbose mode
+./scripts/utils/quick-troubleshoot.sh --verbose
+```
+
+**Collected Information:**
+- System health assessment
+- OS and kernel info
+- Resource usage and limits
+- Disk I/O statistics
+- Network status and connectivity
+- Open ports and connections
+- Top CPU/memory consumers
+- Failed systemd services
+- Docker container health
+- Recent login attempts
+
+### Safe Service Restart (`scripts/utils/safe-restart.sh`)
+
+Safely restart services with validation and rollback.
+
+**Features:**
+- Pre-restart validation
+- Post-restart health checks
+- Automatic rollback on failure
+- Config file backup
+- Support for systemd and Docker
+- Multiple retry attempts
+
+**Quick Start:**
+```bash
+# Restart systemd service
+sudo ./scripts/utils/safe-restart.sh --service nginx
+
+# Restart Docker container
+./scripts/utils/safe-restart.sh --service web-app --type docker --wait 10
+
+# With config backup
+sudo ./scripts/utils/safe-restart.sh --service nginx --backup-config /etc/nginx/nginx.conf
+
+# Multiple retries
+sudo ./scripts/utils/safe-restart.sh --service mysql --retries 5 --wait 10
+
+# Dry run
+./scripts/utils/safe-restart.sh --service nginx --dry-run
+```
+
+### Timezone/Locale Setter (`scripts/utils/set-timezone.sh`)
+
+Standardize timezone and locale settings across servers.
+
+**Features:**
+- Set timezone interactively or via command line
+- Configure system locale
+- Enable NTP synchronization
+- Sync hardware clock
+- Interactive mode
+- List available timezones and locales
+
+**Quick Start:**
+```bash
+# Set timezone
+sudo ./scripts/utils/set-timezone.sh --timezone UTC
+sudo ./scripts/utils/set-timezone.sh --timezone America/New_York
+
+# Set timezone and enable NTP
+sudo ./scripts/utils/set-timezone.sh --timezone Europe/London --enable-ntp
+
+# Set locale
+sudo ./scripts/utils/set-timezone.sh --locale en_US.UTF-8
+
+# Set both
+sudo ./scripts/utils/set-timezone.sh --timezone UTC --locale en_US.UTF-8
+
+# Interactive mode
+sudo ./scripts/utils/set-timezone.sh --interactive
+
+# List available options
+./scripts/utils/set-timezone.sh --list-timezones
+./scripts/utils/set-timezone.sh --list-locales
+```
+
 ## Platform Support
 
 Currently supports:
@@ -778,6 +982,14 @@ Completed:
 - [x] Log aggregation setup
 - [x] Automated security updates management
 - [x] Container orchestration helpers (Docker Swarm)
+- [x] Utility scripts (inventory discovery, dotfiles sync, troubleshooting, safe restart, timezone setter)
+
+Future enhancements (see [FUTURE_FEATURES.md](FUTURE_FEATURES.md) for complete list):
+- [ ] Database management tools
+- [ ] Storage management utilities
+- [ ] Kubernetes/container tools
+- [ ] Migration assistants
+- [ ] Cost optimization tools
 
 ## Contributing
 
