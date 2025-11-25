@@ -951,6 +951,235 @@ sudo ./scripts/utils/set-timezone.sh --interactive
 ./scripts/utils/set-timezone.sh --list-locales
 ```
 
+### 10. Firewall Management (`scripts/security/firewall-manager.sh`)
+
+Simplified UFW/iptables firewall management with preset profiles.
+
+**Features:**
+- Easy firewall rule management
+- Preset profiles (web, ssh, database, docker)
+- IP-based access control
+- Rule backup and logs
+- Dry-run mode
+
+**Quick Start:**
+```bash
+# Enable firewall
+sudo ./scripts/security/firewall-manager.sh enable
+
+# Apply web server preset
+sudo ./scripts/security/firewall-manager.sh preset web
+
+# Allow traffic from specific IP
+sudo ./scripts/security/firewall-manager.sh allow-from 192.168.1.100
+
+# Block an IP
+sudo ./scripts/security/firewall-manager.sh deny-from 10.0.0.50
+
+# Show firewall status
+./scripts/security/firewall-manager.sh status
+```
+
+### 11. Alert Notification System (`scripts/alerting/notify.sh`)
+
+Multi-channel alerting via ntfy.sh, Slack, Discord, and email.
+
+**Features:**
+- Multiple notification channels
+- Alert levels (info, warning, error, critical)
+- Configuration file support
+- Test mode
+
+**Quick Start:**
+```bash
+# Configure (create ~/.notify.conf)
+cat > ~/.notify.conf << EOF
+NTFY_TOPIC="myserver-alerts"
+SLACK_WEBHOOK="https://hooks.slack.com/..."
+EMAIL_TO="admin@example.com"
+EOF
+
+# Send alert
+./scripts/alerting/notify.sh -c all -l critical "Disk full on /var"
+
+# Test notifications
+./scripts/alerting/notify.sh --test
+```
+
+### 12. Disk Cleanup (`scripts/disk/cleanup-old-files.sh`)
+
+Automated disk space cleanup with safety features.
+
+**Features:**
+- Clean temp files, logs, caches
+- Configurable retention periods
+- Dry-run mode (enabled by default)
+- Disk usage analysis
+
+**Quick Start:**
+```bash
+# Analyze disk usage
+./scripts/disk/cleanup-old-files.sh analyze
+
+# Clean temp files (dry-run)
+./scripts/disk/cleanup-old-files.sh --days 7 clean-temp
+
+# Clean everything (actual cleanup)
+sudo ./scripts/disk/cleanup-old-files.sh --execute clean-all
+```
+
+### 13. Nginx Configuration Generator (`scripts/web/nginx-config-gen.sh`)
+
+Generate nginx configurations for common use cases.
+
+**Features:**
+- Templates for static sites, reverse proxy, PHP, WordPress
+- SSL/TLS support
+- Load balancer configurations
+- Auto-enable sites
+
+**Quick Start:**
+```bash
+# Static website
+./scripts/web/nginx-config-gen.sh static example.com --root /var/www/example
+
+# Reverse proxy
+./scripts/web/nginx-config-gen.sh reverse-proxy app.example.com --port 3000 --ssl
+
+# Load balancer
+./scripts/web/nginx-config-gen.sh load-balancer api.example.com \\
+    --backends "10.0.0.1:8080,10.0.0.2:8080"
+```
+
+### 14. Systemd Service Generator (`scripts/services/create-service.sh`)
+
+Interactive systemd service file creator with best practices.
+
+**Features:**
+- Interactive mode
+- Resource limits (CPU, memory)
+- Auto-restart policies
+- Environment variable support
+- User/group management
+
+**Quick Start:**
+```bash
+# Interactive mode
+sudo ./scripts/services/create-service.sh --interactive
+
+# Create service
+sudo ./scripts/services/create-service.sh \\
+    --name myapp \\
+    --exec "/opt/myapp/start.sh" \\
+    --user appuser \\
+    --workdir /opt/myapp \\
+    --restart always \\
+    --enable --start
+```
+
+### 15. User Management (`scripts/users/`)
+
+Standardized user provisioning and SSH key management.
+
+**Manage Users (`manage-users.sh`):**
+```bash
+# Create user with sudo access
+sudo ./scripts/users/manage-users.sh create john --sudo --groups docker
+
+# Create service account
+sudo ./scripts/users/manage-users.sh create appuser --shell /bin/false
+
+# List all sudo users
+sudo ./scripts/users/manage-users.sh list-sudo
+
+# Audit user accounts
+sudo ./scripts/users/manage-users.sh audit
+```
+
+**Deploy SSH Keys (`deploy-keys.sh`):**
+```bash
+# Deploy key to multiple servers
+./scripts/users/deploy-keys.sh \\
+    --key-file ~/.ssh/id_rsa.pub \\
+    --servers servers.txt \\
+    --user deploy
+```
+
+### 16. VPN Setup (`scripts/vpn/wireguard-setup.sh`)
+
+Easy WireGuard VPN deployment with QR codes for mobile clients.
+
+**Quick Start:**
+```bash
+# Install WireGuard
+sudo ./scripts/vpn/wireguard-setup.sh install
+
+# Setup server
+sudo ./scripts/vpn/wireguard-setup.sh setup-server
+
+# Add client
+sudo ./scripts/vpn/wireguard-setup.sh add-client laptop
+
+# Show QR code for mobile
+sudo ./scripts/vpn/wireguard-setup.sh show-qr laptop
+
+# Check status
+sudo ./scripts/vpn/wireguard-setup.sh status
+```
+
+### 17. Database Optimization (`scripts/database/db-optimize.sh`)
+
+Database maintenance and optimization for MySQL and PostgreSQL.
+
+**Quick Start:**
+```bash
+# Analyze database performance
+./scripts/database/db-optimize.sh analyze --type mysql
+
+# Optimize MySQL tables
+./scripts/database/db-optimize.sh optimize --type mysql --database myapp
+
+# Vacuum PostgreSQL
+sudo ./scripts/database/db-optimize.sh vacuum --type postgresql
+
+# Show slow queries
+./scripts/database/db-optimize.sh slow-queries --type mysql
+```
+
+### 18. System Performance Tuning (`scripts/performance/tune-system.sh`)
+
+Optimize Linux kernel parameters for better performance.
+
+**Quick Start:**
+```bash
+# Analyze current performance
+./scripts/performance/tune-system.sh analyze
+
+# Apply all optimizations
+sudo ./scripts/performance/tune-system.sh tune-all
+
+# Create swap file
+sudo ./scripts/performance/tune-system.sh create-swap 4G
+
+# Adjust swappiness
+sudo ./scripts/performance/tune-system.sh adjust-swappiness 10
+```
+
+### 19. Runbooks (`docs/runbooks/`)
+
+Step-by-step procedures for common system administration tasks.
+
+**Available Runbooks:**
+- `disk-full.md` - Diagnose and resolve disk space issues
+- `high-cpu.md` - Handle high CPU usage situations
+- `service-down.md` - Restore downed services
+
+Each runbook includes:
+- Immediate diagnosis steps
+- Common causes and solutions
+- Prevention measures
+- Verification steps
+
 ## Platform Support
 
 Currently supports:
@@ -990,6 +1219,17 @@ Future enhancements (see [FUTURE_FEATURES.md](FUTURE_FEATURES.md) for complete l
 - [ ] Kubernetes/container tools
 - [ ] Migration assistants
 - [ ] Cost optimization tools
+- [x] Firewall management with UFW
+- [x] Multi-channel alert notification system
+- [x] Disk cleanup automation
+- [x] Nginx configuration generator
+- [x] Systemd service generator
+- [x] User management and provisioning
+- [x] SSH key deployment tool
+- [x] WireGuard VPN setup
+- [x] Database optimization tools
+- [x] System performance tuning
+- [x] Runbooks for common issues
 
 ## Contributing
 

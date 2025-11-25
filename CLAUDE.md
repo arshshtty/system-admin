@@ -351,17 +351,92 @@ journalctl -u service-name -f
 tail -f /tmp/health-monitor/*.json
 ```
 
+## Recently Added Components
+
+The following components have been recently added to expand the toolkit's capabilities:
+
+### Firewall Management (`scripts/security/firewall-manager.sh`)
+- UFW-based firewall configuration with preset profiles
+- Supports web, ssh, database, and docker server profiles
+- IP whitelisting/blacklisting capabilities
+- Rule backup and dry-run mode for safety
+
+### Alert Notifications (`scripts/alerting/notify.sh`)
+- Multi-channel notifications (ntfy.sh, Slack, Discord, email)
+- Configurable alert levels (info, warning, error, critical)
+- Configuration file support for easy deployment
+- Test mode to verify channel connectivity
+
+### Disk Cleanup (`scripts/disk/cleanup-old-files.sh`)
+- Automated cleanup of temp files, logs, and caches
+- Configurable retention periods
+- Dry-run mode enabled by default for safety
+- Comprehensive disk usage analysis
+
+### Web Server Tools (`scripts/web/nginx-config-gen.sh`)
+- Nginx configuration generator with multiple templates
+- Supports static sites, reverse proxy, PHP/WordPress, load balancers
+- Built-in SSL/TLS support
+- Auto-enable sites option
+
+### Service Management (`scripts/services/create-service.sh`)
+- Interactive systemd service file generator
+- Resource limits (CPU quota, memory limits)
+- Restart policies and dependency management
+- Environment variable and user/group configuration
+
+### User Administration (`scripts/users/`)
+- **manage-users.sh**: Complete user lifecycle management
+- **deploy-keys.sh**: Bulk SSH key deployment to multiple servers
+- User auditing and security checks
+- Standardized provisioning with best practices
+
+### VPN Setup (`scripts/vpn/wireguard-setup.sh`)
+- WireGuard VPN server installation and configuration
+- Client management with QR code generation for mobile
+- Automatic firewall rule configuration
+- Easy client add/remove operations
+
+### Database Tools (`scripts/database/db-optimize.sh`)
+- MySQL/MariaDB and PostgreSQL support
+- Table optimization and maintenance (OPTIMIZE, VACUUM)
+- Slow query analysis
+- Database statistics and connection monitoring
+
+### Performance Tuning (`scripts/performance/tune-system.sh`)
+- Kernel parameter optimization (network, disk I/O, memory)
+- Swap file creation and swappiness configuration
+- System performance analysis
+- Backup and restore of original settings
+
+### Runbooks (`docs/runbooks/`)
+- **disk-full.md**: Complete guide for disk space issues
+- **high-cpu.md**: CPU usage diagnosis and mitigation
+- **service-down.md**: Service restoration procedures
+- Each includes diagnosis, solutions, prevention, and verification
+
+## Script Development Guidelines
+
+When working with these new components:
+
+1. **Alert Integration**: Use `scripts/alerting/notify.sh` for sending notifications from other scripts
+2. **Firewall Changes**: Always use `--dry-run` first to preview firewall modifications
+3. **Service Creation**: The service generator creates production-ready systemd units
+4. **User Management**: All user operations include audit capabilities for security
+5. **Performance Tuning**: Always backup original settings before making system-wide changes
+6. **Runbooks**: Reference and update runbooks when resolving incidents
+
 ## Future Enhancements
 
-Planned additions:
-- Security baseline audit script
-- SSL certificate management
-- Prometheus + Grafana setup automation
-- Ansible playbooks
-- Network diagnostics tools
-- Log aggregation setup
-- Automated security updates
-- Container orchestration helpers
+Potential future additions:
+- Kubernetes/k3s deployment automation
+- DNS server setup and management (bind9, dnsmasq)
+- Secrets management (HashiCorp Vault integration)
+- Compliance checking (CIS benchmarks)
+- Disaster recovery automation
+- Container registry setup
+- Mail server configuration (Postfix, DKIM/SPF/DMARC)
+- Centralized cron job management
 
 ## Working with Claude Code
 
@@ -411,4 +486,4 @@ Before implementing changes, consider:
 
 ---
 
-**Last Updated**: 2025-11-22
+**Last Updated**: 2025-11-23
